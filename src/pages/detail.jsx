@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { products } from "../products";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cart";
 
 const detail = () => {
   const { slug } = useParams();
 
   const [detail, setDetail] = useState([]);
   const [quantity, setQuantity] = useState(1);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const findDetail = products.filter((product) => product.slug === slug);
@@ -15,11 +19,20 @@ const detail = () => {
   }, [slug]);
 
   const handleMinusQuantity = () => {
-    setQuantity(quantity - 1);
+    setQuantity(quantity - 1 < 1 ? 1 : quantity - 1);
   };
 
   const handlePlusQuantity = () => {
     setQuantity(quantity + 1);
+  };
+
+  const handleAddToCart = () => {
+    dispatch(
+      addToCart({
+        productId: detail.id,
+        quantity: quantity,
+      })
+    );
   };
 
   return (
@@ -50,7 +63,10 @@ const detail = () => {
                 +
               </button>
             </div>
-            <button className="bg-slate-900 text-white px-7 py-3 rounded-xl shadow-2xl">
+            <button
+              className="bg-slate-900 text-white px-7 py-3 rounded-xl shadow-2xl"
+              onClick={handleAddToCart}
+            >
               Add To Cart
             </button>
           </div>
